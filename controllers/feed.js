@@ -1,6 +1,7 @@
 const feedList = [];
 exports.getFeeds = (req,res,next) => {
-    return res.status(200).json(JSON.stringify(feedList));
+    console.log('One request come from: %o',req.headers);
+    return res.status(200).json(feedList);
 }
 
 exports.postFeed = (req,res,next) => {
