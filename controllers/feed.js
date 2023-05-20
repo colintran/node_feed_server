@@ -1,24 +1,44 @@
 const {validationResult} = require('express-validator');
 const Post = require('../models/post');
 
-const postList = [];
-exports.getFeeds = (req,res,next) => {
+exports.getPosts = (req,res,next) => {
     console.log('One request come from: %o',req.headers);
-    return res.status(200).json({
-        posts: [{
-            _id : '1',
-            title: 'The first post',
-            content: 'Something absurd and nonsense ^^',
-            imageUrl: 'images/Testudo.jpg',
-            creator : {
-                name: 'Trand'
-            },
-            createdAt: new Date()
-        }]
-    });
+    Post.find()
+    .then(posts => {
+        res.status(200).json({
+            message: 'Posts retrieved successfully!',
+            posts: posts
+        });
+    })
+    .catch(err => {
+        const error = new Error('Internal Server Error');
+        error.statusCode = 500;
+        next(error);
+    })
 }
 
-exports.postFeed = (req,res,next) => {
+exports.getPost = (req,res,next) => {
+    const postId = req.params.postId;
+    Post.findById({_id: postId})
+    .then(post => {
+        if (!post){
+            const error = new Error('Post not found!');
+            error.statusCode = 404;
+            throw error; // it will go to catch part anyway (so for what??)   
+        }
+        res.status(200).json({
+            message: 'Post retrieved succesfully',
+            post: post
+        });
+    })
+    .catch(err => {
+        const error = new Error('Internal Server Error');
+        error.statusCode = 500;
+        next(error);
+    })
+}
+
+exports.createPost = (req,res,next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         const error = new Error('Validation failed, request message is invalid');
