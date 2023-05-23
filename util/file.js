@@ -9,3 +9,9 @@ exports.initFolders = () => {
         }
     });
 }
+
+exports.deleteFile = (fileName) => {
+    fs.unlink(fileName, (err) => {
+        console.log('Error in removing file [%s]: %s',fileName,err);
+    });
+}
