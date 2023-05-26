@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const io = require('./socket');
 
 const multer = require('multer');
 // Upload file
@@ -51,12 +52,18 @@ app.use((error, req, res, next) => {
     const status = error.statusCode;
     const message = error.message;
     res.status(status).json({
-        message: message
+        message: message,
+        data: error.data
     });
 });
 mongoose.connect('mongodb://localhost:27017/restapi')
     .then(connectionOk => {
-        app.listen(8080);
+        const server = app.listen(8080);
+        // setup websocket
+        io.init(server);
+        io.getIO().on('connection', socket => {
+            console.log('Client connected');
+        })
     })
     .catch(err => {
         console.log('Unable to start server, DB connection error: %o', err);

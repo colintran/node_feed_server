@@ -77,3 +77,10 @@ exports.login = (req,res,next) => {
         next(err);
     })
 }
+
+exports.getStatus = (req,res,next) => {
+    return res.status(200).json({
+        status: 200,
+        message: 'Authenticated'
+    });
+}
