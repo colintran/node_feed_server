@@ -56,7 +56,10 @@ app.use((error, req, res, next) => {
         data: error.data
     });
 });
-mongoose.connect('mongodb://localhost:27017/restapi')
+// load configuration
+const fs = require('fs');
+config = JSON.parse(fs.readFileSync('environment.json'));
+mongoose.connect(config["mongodb-connection-string"])
     .then(connectionOk => {
         const server = app.listen(8080);
         // setup websocket
